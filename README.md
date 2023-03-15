@@ -1,4 +1,1 @@
-项目的初始化配置
-
-应该作为全局安装比较合适
-直接项目使用,效果应该会好一点
+I use myself to initialize the project

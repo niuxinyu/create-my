@@ -1,12 +1,10 @@
-import { exec } from 'node:child_process';
-import { readFileSync, writeFileSync, stat, statSync,  mkdir, copyFileSync } from 'node:fs';
+import { execSync } from 'node:child_process';
+import { copyFileSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { promisify } from 'node:util';
-import { detectNewline } from 'detect-newline';
-import detectIndent from 'detect-indent';
 
-const execAsync = promisify(exec);
+import detectIndent from 'detect-indent';
+import { detectNewline } from 'detect-newline';
 
 const root = process.cwd();
 
@@ -57,11 +55,20 @@ function getTemplatePath() {
     fileURLToPath(import.meta.url),
     '../..',
     'template-my',
-  )
+  );
 }
 
-async function runCommand(command: string) {
-  await execAsync(command).catch((e) => console.error(e));
+function addToGit(command: string) {
+  if (isDirExit(join(root, '.git'))) {
+    execSync('git add .');
+  } else {
+    execSync('git init && git add .');
+  }
+}
+
+function log(...args: any) {
+  // eslint-disable-next-line no-console
+  console.log(...args);
 }
 
 // 先考虑这几种
@@ -70,7 +77,7 @@ const eslintrcs = [
   '.eslintrc.json',
   '.eslintrc.js',
   '.eslintrc.mjs',
-  '.eslintrc.cjs'
+  '.eslintrc.cjs',
 ];
 
 const prettierrcs = [
@@ -108,8 +115,11 @@ function addESlint() {
       writeFileSync(
         join(root, eslintrcs[0]),
         eslintrc.data,
-      )
+      );
+      log('🚚\u0020\u0020ESLint 完成...');
     }
+  } else {
+    log('🛠️\u0020\u0020ESLint 跳过...');
   }
 }
 
@@ -120,8 +130,11 @@ function addPrettier() {
       writeFileSync(
         join(root, prettierrcs[0]),
         prettierrc.data,
-      )
+      );
+      log('🚚\u0020\u0020Prettier 完成...');
     }
+  } else {
+    log('🛠️\u0020\u0020Prettier 跳过...');
   }
 }
 
@@ -132,8 +145,11 @@ function addEditorConfig() {
       writeFileSync(
         join(root, editorconfigs[0]),
         editorconfig.data,
-      )
+      );
+      log('🚚\u0020\u0020EditorConfig 完成...');
     }
+  } else {
+    log('🛠️\u0020\u0020EditorConfig 跳过...');
   }
 }
 
@@ -148,7 +164,7 @@ function addPackageJSON() {
   if (newLine) {
     json += newLine;
   }
-  
+
   writeFileSync(
     join(root, './package.json'),
     json,
@@ -161,11 +177,14 @@ function addGitIgnore() {
   if (!isFileExit(path)) {
     const gitignore = readFileString(src);
     if (gitignore.data) {
-     writeFileSync(
-       path,
-       gitignore.data,
-     ) 
+      writeFileSync(
+        path,
+        gitignore.data,
+      );
+      log('🚚\u0020\u0020Gitignore 完成...');
     }
+  } else {
+    log('🛠️\u0020\u0020Gitignore 跳过...');
   }
 }
 
@@ -173,32 +192,29 @@ function addVsCode() {
   const dir = '.vscode';
   const path = join(root, `./${dir}`);
   const src = join(getTemplatePath(), `./${dir}`);
-  if (isDirExit(getRootPath('./.vscode'))) {
-    console.log('.vscode 目录存在,跳过...');
-  } else {
-    mkdir(path, undefined, (err) => {
-      if (err) {
-        console.error(err);
-      }
-      vscodes.forEach((c) => {
-        copyFileSync(
-          join(src, `./${c}`),
-          join(path, `./${c}`),
-        )
-      });
+  if (!isDirExit(getRootPath('./.vscode'))) {
+    mkdirSync(path, undefined);
+    vscodes.forEach((c) => {
+      copyFileSync(
+        join(src, `./${c}`),
+        join(path, `./${c}`),
+      );
     });
+    log('🚚\u0020\u0020.vscode 完成...');
+  } else {
+    log('🛠️\u0020\u0020.vscode 跳过...');
   }
 }
 
-async function init() {
+function init() {
   addESlint();
   addPrettier();
   addEditorConfig();
   addPackageJSON();
   addGitIgnore();
   addVsCode();
-  await runCommand('git add .');
-  console.log('🥳...Done!!');
+  addToGit('git add .');
+  log('🥳\u0020\u0020...All Done!!');
 }
 
 try {
