@@ -1,0 +1,28 @@
+{
+  "name": "@koalan/create-my",
+  "version": "0.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "files": [
+    "dist",
+    "template-my",
+    "index.js"
+  ],
+  "bin": {
+    "create-my": "index.js"
+  },
+  "scripts": {
+    "dev": "tsc -b src/tsconfig.esm.json -w",
+    "build": "tsc -b src/tsconfig.esm.json && tsc -b src/tsconfig.cjs.json"
+  },
+  "keywords": [],
+  "author": "@koalan",
+  "devDependencies": {
+    "@types/node": "^18.15.3",
+    "detect-indent": "^7.0.1",
+    "detect-newline": "^4.0.0",
+    "typescript": "^4.9.5",
+    "unbuild": "^1.1.2"
+  }
+}

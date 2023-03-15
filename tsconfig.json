@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "ES2020",
+    "target": "ES2020",
+    "moduleResolution": "Node",
+    "strict": true,
+    "sourceMap": false,
+    "declaration": false,
+    "removeComments": true
+  },
+  "include": ["src"],
+  "exclude": [
+    "node_modules"
+  ]
+}
