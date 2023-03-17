@@ -58,7 +58,7 @@ function getTemplatePath() {
   );
 }
 
-function addToGit(command: string) {
+function addToGit() {
   if (isDirExit(join(root, '.git'))) {
     execSync('git add .');
   } else {
@@ -223,7 +223,7 @@ function init() {
   addPackageJSON();
   addGitIgnore();
   addVsCode();
-  addToGit('git add .');
+  addToGit();
   log('🥳\u0020\u0020...All Done!!');
 }
 
