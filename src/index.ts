@@ -64,6 +64,7 @@ function addToGit(command: string) {
   } else {
     execSync('git init && git add .');
   }
+  log('🚚\u0020\u0020Git 完成...');
 }
 
 function log(...args: any) {
@@ -72,6 +73,7 @@ function log(...args: any) {
 }
 
 // 先考虑这几种
+// TODO 已经在 package.json 中配置的 eslint 将会被忽略
 const eslintrcs = [
   '.eslintrc',
   '.eslintrc.json',
@@ -100,6 +102,14 @@ const packages = [
   {
     name: 'prettier',
     version: '^2.8.4',
+  },
+  {
+    name: '@koalan/eslint-config',
+    version: '*',
+  },
+  {
+    name: '@koalan/prettier-config',
+    version: '*',
   },
 ];
 
