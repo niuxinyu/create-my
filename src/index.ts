@@ -6,6 +6,12 @@ import { fileURLToPath } from 'node:url';
 import detectIndent from 'detect-indent';
 import { detectNewline } from 'detect-newline';
 
+const pkgPath = resolve(
+  fileURLToPath(import.meta.url),
+  '../..',
+  'package.json',
+);
+
 const root = process.cwd();
 
 function readFileString(path: string) {
@@ -24,6 +30,21 @@ function readFileJSON(path: string) {
     newLine,
     indent,
   };
+}
+
+function log(...args: any) {
+  // eslint-disable-next-line no-console
+  console.log(...args);
+}
+
+const version = process.argv.slice(2);
+const versions = ['--version', '-v'];
+if (Array.isArray(version) && versions.includes(version[0])) {
+  const pkg = readFileJSON(pkgPath);
+  if (pkg && pkg.data) {
+    log(pkg.data.version);
+    process.exit(0);
+  }
 }
 
 function isFileExit(path: string) {
@@ -67,13 +88,7 @@ function addToGit() {
   log('🚚\u0020\u0020Git 完成...');
 }
 
-function log(...args: any) {
-  // eslint-disable-next-line no-console
-  console.log(...args);
-}
-
 // 先考虑这几种
-// TODO 已经在 package.json 中配置的 eslint 将会被忽略
 const eslintrcs = [
   '.eslintrc',
   '.eslintrc.json',
@@ -165,7 +180,7 @@ function addEditorConfig() {
 
 function addPackageJSON() {
   const { data, newLine, indent } = readFileJSON(join(root, './package.json'));
-  const devPkg = data.devDependencies;
+  const devPkg = data.devDependencies ?? (data.devDependencies = {});
   packages.forEach((p) => {
     devPkg[p.name] = devPkg[p.name] ?? p.version;
   });

@@ -1,3 +1,6 @@
 {
-  "extends": ["@koalan"]
+  "extends": ["@koalan"],
+  "rules": {
+    "linebreak-style": ["error", "unix"]
+  }
 }
